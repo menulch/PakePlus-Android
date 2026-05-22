@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机抽签系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            transition: background 2s ease;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #0288d1;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            min-height: 100px;
+        }
+        
+        .result-box {
+            background-color: #e1f5fe;
+            border: 2px solid #4fc3f7;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0288d1;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-box.selected {
+            background-color: #ffebee;
+            border-color: #f44336;
+            color: #d32f2f;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.2);
+        }
+        
+        .history-container {
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            color: #0288d1;
+            margin-bottom: 10px;
+        }
+        
+        .history-list {
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #b2ebf2;
+        }
+        
+        .history-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e0f7fa;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #0277bd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        #startButton {
+            background-color: #4caf50;
+        }
+        
+        #startButton:hover {
+            background-color: #388e3c;
+        }
+        
+        #resetButton {
+            background-color: #f44336;
+        }
+        
+        #resetButton:hover {
+            background-color: #d32f2f;
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .music-control i {
+            font-size: 24px;
+            color: #0288d1;
+        }
+        
+        .music-control.playing i {
+            color: #4caf50;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        @media (max-width: 600px) {
+            .result-box {
+                font-size: 1.5rem;
+                min-width: 150px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随机抽签系统</h1>
+        
+        <div class="result-container">
+            <div id="result1" class="result-box">点击开始抽签</div>
+            <div id="result2" class="result-box">点击开始抽签</div>
+        </div>
+        
+        <div class="history-container">
+            <div class="history-title">历史记录</div>
+            <div id="historyList" class="history-list"></div>
+        </div>
+        
+        <div class="button-container">
+            <button id="startButton" class="pulse">开始抽签</button>
+            <button id="resetButton">重置</button>
+        </div>
+    </div>
+    
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-music"></i>
+    </div>
+    
+    <audio id="backgroundMusic" loop>
+        <source src="https://assets.codepen.io/21542/howler-demo.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+    
+    <script>
+        // 姓名列表
+        const originalNames = [
+             "林舒婷",  "张玉婷", "王文龙", "蒋平", "邓洪乾", "王封",
+             "陈巧玲",  "庄嘉娴",  "蓝洁",  "吕永强", "刘鑫",
+            "刘小燕", "谢碧愈", "陈友周", "廖楚慧","唐晟强", 
+            "钟怡", "马天婴", "高再攀", "黄美君",  "卢春果", 
+            "曹丹丹", "朱嘉明", "黄伟萍", "罗锋", "张俊峰", 
+            "金淑婷", "张彩珍"
+        ];
+        
+        let availableNames = [...originalNames];
+        let isDrawing = false;
+        let drawInterval;
+        let currentNames = [...originalNames];
+        let musicPlaying = false;
+        let history = [];
+        
+        // DOM元素
+        const result1 = document.getElementById('result1');
+        const result2 = document.getElementById('result2');
+        const startButton = document.getElementById('startButton');
+        const resetButton = document.getElementById('resetButton');
+        const historyList = document.getElementById('historyList');
+        const musicControl = document.getElementById('musicControl');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // 初始化
+        function init() {
+            // 从本地存储加载数据
+            const savedAvailableNames = localStorage.getItem('availableNames');
+            const savedHistory = localStorage.getItem('history');
+            
+            if (savedAvailableNames) {
+                availableNames = JSON.parse(savedAvailableNames);
+            } else {
+                availableNames = [...originalNames];
+            }
+            
+            if (savedHistory) {
+                history = JSON.parse(savedHistory);
+                updateHistoryList();
+            }
+            
+            resetResults();
+        }
+        
+        // 更新历史记录
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <span>${item.date}</span>
+                    <span>${item.name1} 和 ${item.name2}</span>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+        
+        // 重置结果
+        function resetResults() {
+            result1.textContent = '点击开始抽签';
+            result2.textContent = '点击开始抽签';
+            result1.classList.remove('selected');
+            result2.classList.remove('selected');
+            startButton.classList.add('pulse');
+        }
+        
+        // 开始抽签
+        function startDrawing() {
+            if (isDrawing || availableNames.length < 2) return;
+            
+            isDrawing = true;
+            startButton.textContent = '停止';
+            startButton.classList.remove('pulse');
+            
+            drawInterval = setInterval(() => {
+                const randomIndex1 = Math.floor(Math.random() * currentNames.length);
+                const randomIndex2 = Math.floor(Math.random() * currentNames.length);
+                
+                while (randomIndex2 === randomIndex1) {
+                    randomIndex2 = Math.floor(Math.random() * currentNames.length);
+                }
+                
+                result1.textContent = currentNames[randomIndex1];
+                result2.textContent = currentNames[randomIndex2];
+            }, 100);
+        }
+        
+        // 停止抽签
+        function stopDrawing() {
+            if (!isDrawing) return;
+            
+            clearInterval(drawInterval);
+            isDrawing = false;
+            
+            const selected1 = availableNames[Math.floor(Math.random() * availableNames.length)];
+            availableNames = availableNames.filter(name => name !== selected1);
+            
+            let selected2;
+            if (availableNames.length > 0) {
+                selected2 = availableNames[Math.floor(Math.random() * availableNames.length)];
+                availableNames = availableNames.filter(name => name !== selected2);
+            } else {
+                selected2 = "已无更多名字";
+            }
+            
+            // 添加到历史记录
+            history.unshift({
+                date: new Date().toLocaleString(),
+                name1: selected1,
+                name2: selected2
+            });
+            
+            // 保存到本地存储
+            localStorage.setItem('availableNames', JSON.stringify(availableNames));
+            localStorage.setItem('history', JSON.stringify(history));
+            
+            // 更新UI
+            result1.textContent = selected1;
+            result2.textContent = selected2;
+            result1.classList.add('selected');
+            result2.classList.add('selected');
+            updateHistoryList();
+            
+            startButton.textContent = '再次抽签';
+            startButton.classList.add('pulse');
+            
+            // 如果没有足够的名字了，禁用按钮
+            if (availableNames.length < 2) {
+                startButton.disabled = true;
+                startButton.style.opacity = 0.5;
+            }
+        }
+        
+        // 切换音乐
+        function toggleMusic() {
+            if (musicPlaying) {
+                backgroundMusic.pause();
+                musicControl.classList.remove('playing');
+            } else {
+                backgroundMusic.play().catch(e => console.log("自动播放被阻止:", e));
+                musicControl.classList.add('playing');
+            }
+            musicPlaying = !musicPlaying;
+        }
+        
+        // 事件监听
+        startButton.addEventListener('click', function() {
+            if (isDrawing) {
+                stopDrawing();
+            } else {
+                startDrawing();
+            }
+        });
+        
+        resetButton.addEventListener('click', function() {
+            if (confirm('确定要重置所有抽签记录吗？')) {
+                availableNames = [...originalNames];
+                history = [];
+                localStorage.setItem('availableNames', JSON.stringify(availableNames));
+                localStorage.setItem('history', JSON.stringify(history));
+                init();
+                startButton.disabled = false;
+                startButton.style.opacity = 1;
+            }
+        });
+        
+        musicControl.addEventListener('click', toggleMusic);
+        
+        // 初始化页面
+        init();
+    </script>
+</body>
+</html>
