@@ -1,398 +1,320 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机抽签系统</title>
-    <style>
-        body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea);
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow: hidden;
-            transition: background 2s ease;
-        }
-        
-        .container {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            text-align: center;
-            max-width: 800px;
-            width: 100%;
-        }
-        
-        h1 {
-            color: #0288d1;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .result-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            min-height: 100px;
-        }
-        
-        .result-box {
-            background-color: #e1f5fe;
-            border: 2px solid #4fc3f7;
-            border-radius: 10px;
-            padding: 15px 25px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #0288d1;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-        
-        .result-box.selected {
-            background-color: #ffebee;
-            border-color: #f44336;
-            color: #d32f2f;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.2);
-        }
-        
-        .history-container {
-            margin-top: 30px;
-            width: 100%;
-        }
-        
-        .history-title {
-            font-size: 1.2rem;
-            color: #0288d1;
-            margin-bottom: 10px;
-        }
-        
-        .history-list {
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #b2ebf2;
-        }
-        
-        .history-item {
-            padding: 8px 10px;
-            border-bottom: 1px solid #e0f7fa;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .history-item:last-child {
-            border-bottom: none;
-        }
-        
-        .button-container {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
-        button {
-            background-color: #0288d1;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        button:hover {
-            background-color: #0277bd;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        button:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        #startButton {
-            background-color: #4caf50;
-        }
-        
-        #startButton:hover {
-            background-color: #388e3c;
-        }
-        
-        #resetButton {
-            background-color: #f44336;
-        }
-        
-        #resetButton:hover {
-            background-color: #d32f2f;
-        }
-        
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .music-control i {
-            font-size: 24px;
-            color: #0288d1;
-        }
-        
-        .music-control.playing i {
-            color: #4caf50;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 1s infinite;
-        }
-        
-        @media (max-width: 600px) {
-            .result-box {
-                font-size: 1.5rem;
-                min-width: 150px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学生作业登记统计表</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Microsoft YaHei",sans-serif;font-size:13px;background:#f0f4f8;padding:15px;}
+.container{max-width:100%;margin:0 auto;background:#ffffff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);padding:20px;}
+h2{text-align:center;color:#2c3e50;margin-bottom:20px;font-size:22px;}
+
+.tool-bar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #eee;}
+.tool-title{font-size:15px;font-weight:bold;color:#34495e;}
+.tool{width:44px;height:44px;line-height:44px;text-align:center;border-radius:8px;cursor:pointer;font-size:20px;background:#f5f7fa;border:2px solid transparent;transition:all 0.2s;}
+.tool.active{background:#409eff;color:#fff;border-color:#409eff;transform:scale(1.05);}
+
+.btn-group{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px;}
+.btn{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s;}
+.btn-blue{background:#409eff;color:#fff;}
+.btn-blue:hover{background:#337ecc;}
+.btn-green{background:#67c23a;color:#fff;}
+.btn-green:hover{background:#529b2e;}
+.btn-red{background:#f56c6c;color:#fff;}
+.btn-red:hover{background:#dd6161;}
+.btn-orange{background:#ff9500;color:#fff;}
+.btn-orange:hover{background:#e68900;}
+.btn-purple{background:#9368e9;color:#fff;}
+.btn-purple:hover{background:#7e57d1;}
+.btn-teal{background:#20c997;color:#fff;}
+.btn-teal:hover{background:#17a886;}
+
+.table-wrap{width:100%;overflow-x:auto;}
+table{border-collapse:collapse;width:100%;}
+th,td{border:1px solid #ebeef5;padding:6px 4px;text-align:center;}
+th{background:#f5f7fa;color:#606266;font-weight:600;font-size:12px;}
+.id-col{background:#f0f7ff;font-weight:bold;width:60px;}
+.name-col{background:#ecf5ff;font-weight:bold;color:#2c3e50;width:80px;}
+.date-check{width:16px;height:16px;cursor:pointer;}
+.cell{width:32px;height:32px;line-height:32px;border:1px solid #dcdfe6;border-radius:4px;cursor:pointer;display:inline-block;font-size:16px;background:#fff;transition:all 0.2s;}
+.cell:hover{background:#f0f7ff;border-color:#409eff;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>随机抽签系统</h1>
-        
-        <div class="result-container">
-            <div id="result1" class="result-box">点击开始抽签</div>
-            <div id="result2" class="result-box">点击开始抽签</div>
-        </div>
-        
-        <div class="history-container">
-            <div class="history-title">历史记录</div>
-            <div id="historyList" class="history-list"></div>
-        </div>
-        
-        <div class="button-container">
-            <button id="startButton" class="pulse">开始抽签</button>
-            <button id="resetButton">重置</button>
-        </div>
+<div class="container">
+    <h2>学生作业登记统计表</h2>
+
+    <div class="tool-bar">
+        <span class="tool-title">选择标记工具：</span>
+        <div class="tool" data-mark="⭐">⭐</div>
+        <div class="tool" data-mark="▲">▲</div>
+        <div class="tool" data-mark="●">●</div>
+        <div class="tool" data-mark="✗">✗</div>
+        <div class="tool" data-mark="">清空</div>
     </div>
-    
-    <div class="music-control" id="musicControl">
-        <i class="fas fa-music"></i>
+
+    <div class="btn-group">
+        <button class="btn btn-blue" onclick="addDate()">➕ 添加日期列</button>
+        <button class="btn btn-orange" onclick="delCheckedCol()">🗑️ 删除选中列</button>
+        <button class="btn btn-purple" onclick="resetCheckedCol()">🔄 重置选中列</button>
+        <button class="btn btn-teal" onclick="fillRemainStar()">其余空白一键填⭐</button>
+        <button class="btn btn-teal" onclick="fillRemainTriangle()">其余空白一键填▲</button>
+        <button class="btn btn-green" onclick="exportExcel()">📤 导出Excel</button>
+        <button class="btn btn-red" onclick="resetAll()">🔄 重置全部记录</button>
     </div>
-    
-    <audio id="backgroundMusic" loop>
-        <source src="https://assets.codepen.io/21542/howler-demo.mp3" type="audio/mpeg">
-        您的浏览器不支持音频元素。
-    </audio>
-    
-    <script>
-        // 姓名列表
-        const originalNames = [
-             "林舒婷",  "张玉婷", "王文龙", "蒋平", "邓洪乾", "王封",
-             "陈巧玲",  "庄嘉娴",  "蓝洁",  "吕永强", "刘鑫",
-            "刘小燕", "谢碧愈", "陈友周", "廖楚慧","唐晟强", 
-            "钟怡", "马天婴", "高再攀", "黄美君",  "卢春果", 
-            "曹丹丹", "朱嘉明", "黄伟萍", "罗锋", "张俊峰", 
-            "金淑婷", "张彩珍"
-        ];
-        
-        let availableNames = [...originalNames];
-        let isDrawing = false;
-        let drawInterval;
-        let currentNames = [...originalNames];
-        let musicPlaying = false;
-        let history = [];
-        
-        // DOM元素
-        const result1 = document.getElementById('result1');
-        const result2 = document.getElementById('result2');
-        const startButton = document.getElementById('startButton');
-        const resetButton = document.getElementById('resetButton');
-        const historyList = document.getElementById('historyList');
-        const musicControl = document.getElementById('musicControl');
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        
-        // 初始化
-        function init() {
-            // 从本地存储加载数据
-            const savedAvailableNames = localStorage.getItem('availableNames');
-            const savedHistory = localStorage.getItem('history');
-            
-            if (savedAvailableNames) {
-                availableNames = JSON.parse(savedAvailableNames);
-            } else {
-                availableNames = [...originalNames];
+
+    <div class="table-wrap">
+        <table id="tab">
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const stuList = [
+"蔡雨潼","曾梓晴","陈文皓","陈夏沛","程钟仪","邓传鹏","丁姝晗","冯金桂",
+"关诗荧","何思莹","何泽锦","何紫汐","黄世杰","黄彦晞","黄语涵","黄仲骞",
+"金惟明","赖博霖","李思宇","李泽升","马佳为","马佳因","麦允晴","莫观铭",
+"卿沐锋","谭知行","温妤诺","吴俊德","吴婉瑄","吴泽锴","谢子开","谢梓钧",
+"熊晨睿","张一漫","邹展埼"
+];
+
+const stuIdList = stuList.map((_, idx) => String(idx + 1).padStart(2, '0'));
+
+let nowMark = "⭐";
+let dateArr = JSON.parse(localStorage.getItem("dateArr")) || [];
+let record = JSON.parse(localStorage.getItem("homeworkRecord")) || {};
+
+document.querySelectorAll(".tool").forEach(el => {
+    el.onclick = function () {
+        document.querySelectorAll(".tool").forEach(e => e.classList.remove("active"));
+        this.classList.add("active");
+        nowMark = this.dataset.mark;
+    }
+});
+document.querySelector(".tool").classList.add("active");
+
+function renderTable() {
+    let headHtml = "<tr><th class='id-col'>学号</th><th class='name-col'>学生姓名</th>";
+    for (let d of dateArr) {
+        headHtml += `<th><input type="checkbox" class="date-check" data-date="${d}"><br>${d}</th>`;
+    }
+    headHtml += "<th>优秀⭐</th><th>订正▲</th><th>未完成●</th><th>未带✗</th></tr>";
+    document.getElementById("thead").innerHTML = headHtml;
+
+    let bodyHtml = "";
+    for (let i = 0; i < stuList.length; i++) {
+        let name = stuList[i];
+        let id = stuIdList[i];
+        bodyHtml += "<tr>";
+        bodyHtml += "<td class='id-col'>" + id + "</td>";
+        bodyHtml += "<td class='name-col'>" + name + "</td>";
+
+        for (let d of dateArr) {
+            let val = "";
+            if (record[name] && record[name][d]) {
+                val = record[name][d];
             }
-            
-            if (savedHistory) {
-                history = JSON.parse(savedHistory);
-                updateHistoryList();
-            }
-            
-            resetResults();
+            bodyHtml += `<td><div class="cell" onclick="setMark('${name}','${d}')">${val}</div></td>`;
         }
-        
-        // 更新历史记录
-        function updateHistoryList() {
-            historyList.innerHTML = '';
-            history.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <span>${item.date}</span>
-                    <span>${item.name1} 和 ${item.name2}</span>
-                `;
-                historyList.appendChild(div);
-            });
-        }
-        
-        // 重置结果
-        function resetResults() {
-            result1.textContent = '点击开始抽签';
-            result2.textContent = '点击开始抽签';
-            result1.classList.remove('selected');
-            result2.classList.remove('selected');
-            startButton.classList.add('pulse');
-        }
-        
-        // 开始抽签
-        function startDrawing() {
-            if (isDrawing || availableNames.length < 2) return;
-            
-            isDrawing = true;
-            startButton.textContent = '停止';
-            startButton.classList.remove('pulse');
-            
-            drawInterval = setInterval(() => {
-                const randomIndex1 = Math.floor(Math.random() * currentNames.length);
-                const randomIndex2 = Math.floor(Math.random() * currentNames.length);
-                
-                while (randomIndex2 === randomIndex1) {
-                    randomIndex2 = Math.floor(Math.random() * currentNames.length);
-                }
-                
-                result1.textContent = currentNames[randomIndex1];
-                result2.textContent = currentNames[randomIndex2];
-            }, 100);
-        }
-        
-        // 停止抽签
-        function stopDrawing() {
-            if (!isDrawing) return;
-            
-            clearInterval(drawInterval);
-            isDrawing = false;
-            
-            const selected1 = availableNames[Math.floor(Math.random() * availableNames.length)];
-            availableNames = availableNames.filter(name => name !== selected1);
-            
-            let selected2;
-            if (availableNames.length > 0) {
-                selected2 = availableNames[Math.floor(Math.random() * availableNames.length)];
-                availableNames = availableNames.filter(name => name !== selected2);
-            } else {
-                selected2 = "已无更多名字";
-            }
-            
-            // 添加到历史记录
-            history.unshift({
-                date: new Date().toLocaleString(),
-                name1: selected1,
-                name2: selected2
-            });
-            
-            // 保存到本地存储
-            localStorage.setItem('availableNames', JSON.stringify(availableNames));
-            localStorage.setItem('history', JSON.stringify(history));
-            
-            // 更新UI
-            result1.textContent = selected1;
-            result2.textContent = selected2;
-            result1.classList.add('selected');
-            result2.classList.add('selected');
-            updateHistoryList();
-            
-            startButton.textContent = '再次抽签';
-            startButton.classList.add('pulse');
-            
-            // 如果没有足够的名字了，禁用按钮
-            if (availableNames.length < 2) {
-                startButton.disabled = true;
-                startButton.style.opacity = 0.5;
-            }
-        }
-        
-        // 切换音乐
-        function toggleMusic() {
-            if (musicPlaying) {
-                backgroundMusic.pause();
-                musicControl.classList.remove('playing');
-            } else {
-                backgroundMusic.play().catch(e => console.log("自动播放被阻止:", e));
-                musicControl.classList.add('playing');
-            }
-            musicPlaying = !musicPlaying;
-        }
-        
-        // 事件监听
-        startButton.addEventListener('click', function() {
-            if (isDrawing) {
-                stopDrawing();
-            } else {
-                startDrawing();
+
+        let s = countStat(name);
+        bodyHtml += `<td>${s.star}</td><td>${s.tri}</td><td>${s.cir}</td><td>${s.cro}</td>`;
+        bodyHtml += "</tr>";
+    }
+    document.getElementById("tbody").innerHTML = bodyHtml;
+}
+
+function setMark(name, date) {
+    if (!record[name]) record[name] = {};
+    record[name][date] = nowMark;
+    saveData();
+    renderTable();
+}
+
+function countStat(name) {
+    let star = 0, tri = 0, cir = 0, cro = 0;
+    if (!record[name]) return { star, tri, cir, cro };
+    let arr = Object.values(record[name]);
+    for (let v of arr) {
+        if (v === "⭐") star++;
+        if (v === "▲") tri++;
+        if (v === "●") cir++;
+        if (v === "✗") cro++;
+    }
+    return { star, tri, cir, cro };
+}
+
+function saveData() {
+    localStorage.setItem("dateArr", JSON.stringify(dateArr));
+    localStorage.setItem("homeworkRecord", JSON.stringify(record));
+}
+
+function addDate() {
+    let d = prompt("请输入日期（示例：5月9日）");
+    if (!d) return;
+    d = d.trim();
+    if (!dateArr.includes(d)) {
+        dateArr.push(d);
+        saveData();
+        renderTable();
+    }
+}
+
+function getCheckedDates(){
+    let checks = document.querySelectorAll(".date-check:checked");
+    let list = [];
+    checks.forEach(cb=>{
+        list.push(cb.dataset.date);
+    });
+    return list;
+}
+
+// 删除选中列
+function delCheckedCol(){
+    let checkList = getCheckedDates();
+    if(checkList.length === 0){
+        alert("请先勾选要删除的日期列！");
+        return;
+    }
+    if(!confirm("确定要删除选中的日期列及所有记录吗？")) return;
+    dateArr = dateArr.filter(d=>!checkList.includes(d));
+    for(let name of stuList){
+        if(!record[name]) continue;
+        checkList.forEach(d=>{
+            delete record[name][d];
+        });
+    }
+    saveData();
+    renderTable();
+    alert("已删除选中列");
+}
+
+// 重置选中列清空标记
+function resetCheckedCol(){
+    let checkList = getCheckedDates();
+    if(checkList.length === 0){
+        alert("请先勾选要重置的日期列！");
+        return;
+    }
+    if(!confirm("确定要清空选中列所有学生的作业标记吗？")) return;
+    for(let name of stuList){
+        if(!record[name]) record[name] = {};
+        checkList.forEach(d=>{
+            record[name][d] = "";
+        });
+    }
+    saveData();
+    renderTable();
+    alert("已重置选中列");
+}
+
+// 功能1：选中列 空白格子全部填星星，已有符号保留
+function fillRemainStar(){
+    let checkList = getCheckedDates();
+    if(checkList.length === 0){
+        alert("请先勾选要批量填充的日期列！");
+        return;
+    }
+    if(!confirm("确定把选中列所有空白格子一键填为⭐？已有标记不变")) return;
+
+    checkList.forEach(date=>{
+        stuList.forEach(name=>{
+            if(!record[name]) record[name] = {};
+            // 为空才填星星，已有⭐ ▲ ● ✗ 都保留
+            if(!record[name][date]){
+                record[name][date] = "⭐";
             }
         });
-        
-        resetButton.addEventListener('click', function() {
-            if (confirm('确定要重置所有抽签记录吗？')) {
-                availableNames = [...originalNames];
-                history = [];
-                localStorage.setItem('availableNames', JSON.stringify(availableNames));
-                localStorage.setItem('history', JSON.stringify(history));
-                init();
-                startButton.disabled = false;
-                startButton.style.opacity = 1;
+    });
+    saveData();
+    renderTable();
+    alert("已完成：空白全部填充⭐，原有标记保留");
+}
+
+// 功能2：选中列 空白格子全部填三角形，已有符号保留
+function fillRemainTriangle(){
+    let checkList = getCheckedDates();
+    if(checkList.length === 0){
+        alert("请先勾选要批量填充的日期列！");
+        return;
+    }
+    if(!confirm("确定把选中列所有空白格子一键填为▲？已有标记不变")) return;
+
+    checkList.forEach(date=>{
+        stuList.forEach(name=>{
+            if(!record[name]) record[name] = {};
+            // 为空才填三角，已有符号保留
+            if(!record[name][date]){
+                record[name][date] = "▲";
             }
         });
-        
-        musicControl.addEventListener('click', toggleMusic);
-        
-        // 初始化页面
-        init();
-    </script>
+    });
+    saveData();
+    renderTable();
+    alert("已完成：空白全部填充▲，原有标记保留");
+}
+
+function resetAll() {
+    if (confirm("确定清空所有作业登记记录？学生姓名和日期列保留！")) {
+        record = {};
+        saveData();
+        renderTable();
+    }
+}
+
+// ===================== 仅修改这里：适配 PakePlus 导出 =====================
+function exportExcel() {
+    let excelData = [];
+    let header = ["学号","学生姓名",...dateArr,"优秀次数","订正次数","未完成次数","未带次数"];
+    excelData.push(header);
+
+    for (let i = 0; i < stuList.length; i++) {
+        let name = stuList[i];
+        let row = [stuIdList[i], name];
+        for (let d of dateArr) {
+            row.push(record[name]?.[d] || "");
+        }
+        let s = countStat(name);
+        row.push(s.star, s.tri, s.cir, s.cro);
+        excelData.push(row);
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "作业登记记录");
+
+    try {
+        // PakePlus 安卓APP环境
+        if (window.android || window.pake) {
+            const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+            const blob = new Blob([data], { type: 'application/octet-stream' });
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                const base64 = this.result.split(',')[1];
+                window.android.saveFile(
+                    "学生作业登记记录表.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    base64
+                );
+                alert("导出成功！文件保存在手机【下载】文件夹中");
+            };
+            reader.readAsDataURL(blob);
+        } 
+        // 浏览器环境（保持原来的方式）
+        else {
+            XLSX.writeFile(wb, "学生作业登记记录表.xlsx");
+        }
+    } catch (e) {
+        alert("导出失败：" + e.message);
+    }
+}
+// ===================== 修改结束 =====================
+
+renderTable();
+</script>
 </body>
 </html>
